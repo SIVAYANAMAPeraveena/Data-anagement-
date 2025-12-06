@@ -13,12 +13,12 @@ from PIL import Image
 # Configuration de la page
 st.set_page_config(
     page_title="Analyse Agents Ville de Paris",
-    page_icon="🏛️",
+    page_icon="📊",
     layout="wide"
 )
 
 # Titre principal
-st.title("🏛️ Analyse de la Domiciliation des Agents de la Ville de Paris")
+st.title("Analyse de la Domiciliation des Agents de la Ville de Paris")
 st.markdown("---")
 
 # --- CHARGEMENT DES DONNÉES ---
@@ -31,7 +31,7 @@ def charger_donnees():
 # Charger les données
 try:
     df = charger_donnees()
-    st.success(f"✓ Données chargées : {len(df):,} lignes, {len(df.columns)} colonnes")
+    st.success(f"Données chargées : {len(df):,} lignes, {len(df.columns)} colonnes")
 except Exception as e:
     st.error(f"Erreur de chargement : {e}")
     st.stop()
@@ -96,18 +96,18 @@ DIRECTION_MAPPING = {
 }
 
 # --- SIDEBAR - PRÉSENTATION ---
-st.sidebar.header("📊 Navigation")
+st.sidebar.header("Navigation")
 page = st.sidebar.radio(
     "Choisir une section :",
     [
-        "📋 Présentation des données",
-        "🗺️ Carte géographique",
-        "📍 Analyse géographique détaillée",
-        "🎨 Treemap - Directions thématiques",
-        "📊 Analyse par catégorie",
-        "📈 Évolution temporelle",
-        "🦠 Analyse post-COVID",
-        "☁️ WordCloud - Text Mining"
+        "Présentation des données",
+        "Carte géographique",
+        "Analyse géographique détaillée",
+        "Treemap - Directions thématiques",
+        "Analyse par catégorie",
+        "Évolution temporelle",
+        "Analyse post-COVID",
+        "WordCloud - Text Mining"
     ]
 )
 
@@ -120,15 +120,23 @@ st.sidebar.info(
     """
 )
 
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 🔗 Accès aux données")
+st.sidebar.markdown(
+    """
+    [📊 Dataset OpenData Paris](https://opendata.paris.fr/explore/dataset/domiciliation-des-agents-bilan-social/information/)
+    """
+)
+
 # =============================================================================
 # PAGE 1 : PRÉSENTATION DES DONNÉES
 # =============================================================================
-if page == "📋 Présentation des données":
+if page == "Présentation des données":
     st.header("Présentation du jeu de données")
     
     # FILTRO DE AÑO
     st.sidebar.markdown("---")
-    st.sidebar.subheader("🔍 Filtres")
+    st.sidebar.subheader("Filtres")
     annee_selectionnee = st.sidebar.selectbox(
         "Sélectionner une année :",
         options=sorted(df['DATE'].unique(), reverse=True),
@@ -139,7 +147,7 @@ if page == "📋 Présentation des données":
     df_filtree = df[df['DATE'] == annee_selectionnee].copy()
     
     # Mensaje claro
-    st.info(f"📅 **Données affichées pour l'année {annee_selectionnee}** (pour éviter le double comptage des agents)")
+    st.info(f"Données affichées pour l'année {annee_selectionnee} (pour éviter le double comptage des agents)")
     
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -171,12 +179,12 @@ if page == "📋 Présentation des données":
 # =============================================================================
 # PAGE 2 : CARTE GÉOGRAPHIQUE
 # =============================================================================
-elif page == "🗺️ Carte géographique":
+elif page == "Carte géographique":
     st.header("Concentration géographique des agents")
     
     # FILTRO DE AÑO
     st.sidebar.markdown("---")
-    st.sidebar.subheader("🔍 Filtres")
+    st.sidebar.subheader("Filtres")
     annee_selectionnee = st.sidebar.selectbox(
         "Sélectionner une année :",
         options=sorted(df['DATE'].unique(), reverse=True),
@@ -187,7 +195,7 @@ elif page == "🗺️ Carte géographique":
     df_filtree = df[df['DATE'] == annee_selectionnee].copy()
     
     # Mensaje claro
-    st.info(f"📅 **Carte pour l'année {annee_selectionnee}** (évite le double comptage)")
+    st.info(f"Carte pour l'année {annee_selectionnee} (évite le double comptage)")
     
     # Agrégation par ville (ya viene con PARIS 1, PARIS 10, etc en la columna VILLE)
     donnees_villes = df_filtree.groupby(['VILLE', 'LATITUDE', 'LONGITUDE']).agg({
@@ -224,10 +232,9 @@ elif page == "🗺️ Carte géographique":
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** La carte révèle une forte concentration d'agents dans Paris intra-muros, 
-    avec une présence significative dans les communes limitrophes de la petite couronne. 
-    La taille et l'intensité des bulles indiquent le nombre d'agents par localisation, 
-    permettant d'identifier rapidement les zones de résidence principales.
+    La carte montre une forte concentration d'agents dans Paris intra-muros, 
+    avec une présence importante dans les communes limitrophes de la petite couronne. 
+    La taille et l'intensité des bulles correspondent au nombre d'agents par localisation.
     """)
     
     # Top 20 villes avec totaux et pourcentages
@@ -263,18 +270,17 @@ elif page == "🗺️ Carte géographique":
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** Le tableau montre que les 20 premières localisations concentrent 
-    une part importante des effectifs. Les arrondissements parisiens figurent en tête, 
-    suivis par des communes de banlieue proche. Cette distribution reflète les dynamiques 
-    résidentielles de l'agglomération francilienne.
+    Le tableau montre que les 20 premières localisations concentrent 
+    une part importante des effectifs. Les arrondissements parisiens dominent, 
+    suivis par des communes de banlieue proche.
     """)
 
 # =============================================================================
 # PAGE 3 : ANALYSE GÉOGRAPHIQUE DÉTAILLÉE
 # =============================================================================
-elif page == "📍 Analyse géographique détaillée":
+elif page == "Analyse géographique détaillée":
     st.header("Analyse de la Distance à Paris : Catégorie et Genre")
-    st.markdown("*Exploration de la relation entre localisation résidentielle, hiérarchie professionnelle et genre*")
+    st.markdown("Exploration de la relation entre localisation résidentielle, hiérarchie professionnelle et genre")
     
     # Filtrer données valides et au 95% (éliminer outliers extremos)
     df_geo = df[df['DISTANCE_PARIS_KM'].notna()].copy()
@@ -284,10 +290,10 @@ elif page == "📍 Analyse géographique détaillée":
     p_high = df_geo['DISTANCE_PARIS_KM'].quantile(0.975)
     df_geo = df_geo[(df_geo['DISTANCE_PARIS_KM'] >= p_low) & (df_geo['DISTANCE_PARIS_KM'] <= p_high)]
     
-    st.info(f"📊 Analyse basée sur 95% des données (outliers extrêmes exclus) : {len(df_geo):,} observations")
+    st.info(f"Analyse basée sur 95% des données (outliers extrêmes exclus) : {len(df_geo):,} observations")
     
     # GRAPHIQUE 1: Boxplot par catégorie
-    st.subheader("1️⃣ Distribution des distances à Paris selon la catégorie professionnelle")
+    st.subheader("Distribution des distances à Paris selon la catégorie professionnelle")
     
     data_cat = df_geo[df_geo['CATEGORIE'].isin(['A', 'B', 'C'])].copy()
     
@@ -321,13 +327,12 @@ elif page == "📍 Analyse géographique détaillée":
     
     # Interprétation descriptiva
     st.markdown("""
-    **Observations :** Les boxplots révèlent les distributions de distances pour chaque catégorie professionnelle. 
-    La médiane (ligne centrale) indique la distance typique, tandis que la boîte représente 50% des agents. 
-    Les catégories A, B et C présentent des profils de localisation distincts, avec des médianes et dispersions variables.
+    Les boxplots montrent les distributions de distances pour chaque catégorie professionnelle. 
+    La médiane (ligne centrale) indique la distance typique, tandis que la boîte représente 50% des agents.
     """)
     
     # GRAPHIQUE 2: Boxplot par sexe
-    st.subheader("2️⃣ Distribution des distances à Paris selon le genre")
+    st.subheader("Distribution des distances à Paris selon le genre")
     
     data_sexe = df_geo[df_geo['SEXE'].isin(['FEMININ', 'MASCULIN'])].copy()
     
@@ -361,13 +366,12 @@ elif page == "📍 Analyse géographique détaillée":
     
     # Interprétation descriptiva
     st.markdown("""
-    **Observations :** La comparaison par genre montre les différences de distribution des distances résidentielles. 
-    Les médianes et quartiles permettent d'identifier les tendances centrales et la dispersion pour chaque groupe. 
-    L'étendue des boîtes indique la variabilité des choix résidentiels au sein de chaque population.
+    La comparaison par genre montre les différences de distribution des distances résidentielles. 
+    Les médianes et quartiles permettent d'identifier les tendances centrales et la dispersion pour chaque groupe.
     """)
     
     # GRAPHIQUE 3: Boxplot Catégorie × Genre
-    st.subheader("3️⃣ Distribution des distances : Analyse croisée Catégorie × Genre")
+    st.subheader("Distribution des distances : Analyse croisée Catégorie × Genre")
     
     data_croisee = df_geo[(df_geo['CATEGORIE'].isin(['A', 'B', 'C'])) & 
                           (df_geo['SEXE'].isin(['FEMININ', 'MASCULIN']))].copy()
@@ -394,14 +398,13 @@ elif page == "📍 Analyse géographique détaillée":
     
     # Interprétation descriptiva
     st.markdown("""
-    **Observations :** L'analyse croisée permet de comparer simultanément les effets de la catégorie professionnelle 
+    L'analyse croisée compare simultanément les effets de la catégorie professionnelle 
     et du genre sur la localisation résidentielle. Pour chaque catégorie (A, B, C), les distributions sont présentées 
-    séparément pour les hommes et les femmes, révélant les patterns de distance spécifiques à chaque sous-groupe. 
-    Les médianes et quartiles facilitent l'identification de similitudes et différences entre les groupes.
+    séparément pour les hommes et les femmes.
     """)
     
     # GRAPHIQUE 4: Heatmap - Tableau croisé
-    st.subheader("4️⃣ Synthèse : Distance médiane par Catégorie et Genre")
+    st.subheader("Synthèse : Distance médiane par Catégorie et Genre")
     
     tableau_croise = data_croisee.groupby(['CATEGORIE', 'SEXE'])['DISTANCE_PARIS_KM'].median().reset_index()
     pivot_table = tableau_croise.pivot(index='CATEGORIE', columns='SEXE', values='DISTANCE_PARIS_KM')
@@ -428,19 +431,17 @@ elif page == "📍 Analyse géographique détaillée":
     
     # Interprétation descriptiva
     st.markdown("""
-    **Observations :** La heatmap synthétise les distances médianes pour chaque combinaison de catégorie et genre. 
-    Les couleurs facilitent l'identification rapide des groupes résidant plus près ou plus loin de Paris. 
-    Cette visualisation permet de comparer en un coup d'œil les six sous-groupes (A/B/C × Féminin/Masculin) 
-    et d'identifier les patterns dominants dans la distribution spatiale des agents.
+    La heatmap synthétise les distances médianes pour chaque combinaison de catégorie et genre. 
+    Les couleurs facilitent l'identification des groupes résidant plus près ou plus loin de Paris.
     """)
 
 # =============================================================================
 # PAGE 4 : TREEMAP - DIRECTIONS THÉMATIQUES (JERÁRQUICO 2 NIVELES)
 # =============================================================================
-elif page == "🎨 Treemap - Directions thématiques":
+elif page == "Treemap - Directions thématiques":
     st.header("Distribution des agents par direction thématique")
-    st.markdown("*Treemap hiérarchique : Catégories thématiques > Directions individuelles*")
-    st.markdown("*Couleur = Proportion de femmes (Bleu = Hommes | Rouge = Femmes)*")
+    st.markdown("Treemap hiérarchique : Catégories thématiques > Directions individuelles")
+    st.markdown("Couleur = Proportion de femmes (Bleu = Hommes | Rouge = Femmes)")
     
     # Préparer données hiérarchiques
     data_treemap = df.dropna(subset=['DIRECTION_THEMATIQUE', 'DIRECTION', 'SEXE'])
@@ -525,15 +526,15 @@ elif page == "🎨 Treemap - Directions thématiques":
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** Le treemap présente une visualisation hiérarchique à deux niveaux. 
+    Le treemap présente une visualisation hiérarchique à deux niveaux. 
     La taille de chaque rectangle est proportionnelle au nombre d'agents. Le premier niveau montre 
     les catégories thématiques principales, et en cliquant dessus, on peut explorer les directions 
     individuelles qui les composent. La couleur indique la proportion de femmes, du bleu (majorité masculine) 
-    au rouge (majorité féminine), permettant d'identifier rapidement la parité dans chaque service.
+    au rouge (majorité féminine).
     """)
     
     # Tableau de composition des catégories thématiques (CON % FEMMES)
-    st.subheader("📋 Composition détaillée par catégorie thématique")
+    st.subheader("Composition détaillée par catégorie thématique")
     
     for thematique in sorted(DIRECTION_MAPPING.keys()):
         with st.expander(f"**{thematique}**"):
@@ -576,7 +577,7 @@ elif page == "🎨 Treemap - Directions thématiques":
                 st.info("Aucune donnée disponible pour cette catégorie")
     
     # Tableau récapitulatif global
-    st.subheader("📊 Tableau récapitulatif par catégorie thématique")
+    st.subheader("Tableau récapitulatif par catégorie thématique")
     
     summary_data = []
     for thematique in sorted(data_treemap['DIRECTION_THEMATIQUE'].unique()):
@@ -606,15 +607,14 @@ elif page == "🎨 Treemap - Directions thématiques":
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** Les tableaux détaillés montrent la composition exacte de chaque catégorie thématique, 
-    avec les effectifs par direction, leur poids relatif, et la proportion de femmes. Ces données permettent 
-    d'analyser la structure organisationnelle et la répartition des effectifs au sein de l'administration parisienne.
+    Les tableaux détaillés montrent la composition exacte de chaque catégorie thématique, 
+    avec les effectifs par direction, leur poids relatif, et la proportion de femmes.
     """)
 
 # =============================================================================
 # PAGE 5 : ANALYSE PAR CATÉGORIE
 # =============================================================================
-elif page == "📊 Analyse par catégorie":
+elif page == "Analyse par catégorie":
     st.header("Distribution des catégories par direction thématique")
     
     # Filtrer catégories A, B, C
@@ -662,39 +662,37 @@ elif page == "📊 Analyse par catégorie":
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** Le graphique en barres empilées montre la composition de chaque direction thématique 
+    Le graphique en barres empilées montre la composition de chaque direction thématique 
     selon les trois catégories professionnelles (A, B, C). Les directions sont classées par ordre décroissant 
-    de proportion de catégorie A. Cette visualisation permet d'identifier rapidement les services à forte 
-    concentration de cadres versus ceux à dominante exécution.
+    de proportion de catégorie A.
     """)
     
     # Top directions élitistes
     col1, col2 = st.columns(2)
     
     with col1:
-        st.subheader("🔴 Plus de Catégorie A")
+        st.subheader("Plus de Catégorie A")
         top_a = tableau_pct['A'].nlargest(5)
         for direction, pct in top_a.items():
             st.write(f"**{direction}** : {pct:.1f}%")
     
     with col2:
-        st.subheader("🔵 Plus de Catégorie C")
+        st.subheader("Plus de Catégorie C")
         top_c = tableau_pct['C'].nlargest(5)
         for direction, pct in top_c.items():
             st.write(f"**{direction}** : {pct:.1f}%")
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** Les classements montrent les cinq directions avec les plus fortes concentrations 
+    Les classements montrent les cinq directions avec les plus fortes concentrations 
     de catégorie A (cadres) et de catégorie C (agents d'exécution). Ces différences reflètent les missions 
-    et besoins spécifiques de chaque service : certains requièrent davantage d'expertise de haut niveau, 
-    d'autres s'appuient sur des effectifs opérationnels importants.
+    et besoins spécifiques de chaque service.
     """)
 
 # =============================================================================
 # PAGE 6 : ÉVOLUTION TEMPORELLE
 # =============================================================================
-elif page == "📈 Évolution temporelle":
+elif page == "Évolution temporelle":
     st.header("Évolution des effectifs dans le temps (2014-2022)")
     
     tab1, tab2 = st.tabs(["Par Direction Thématique", "Par Catégorie"])
@@ -720,10 +718,9 @@ elif page == "📈 Évolution temporelle":
         
         # Interpretación descriptiva
         st.markdown("""
-        **Observations :** L'évolution temporelle montre les tendances d'effectifs pour chaque direction thématique 
+        L'évolution temporelle montre les tendances d'effectifs pour chaque direction thématique 
         entre 2014 et 2022. Certaines directions présentent une croissance continue, d'autres une stabilité, 
-        et quelques-unes un déclin. Ces variations reflètent les évolutions de priorités politiques, 
-        les réorganisations administratives et les besoins changeants de l'administration parisienne.
+        et quelques-unes un déclin.
         """)
     
     with tab2:
@@ -778,15 +775,13 @@ elif page == "📈 Évolution temporelle":
         
         # Interpretación descriptiva
         st.markdown("""
-        **Observations :** Les deux graphiques présentent l'évolution des catégories professionnelles. 
-        Le premier montre les effectifs absolus, permettant de voir les volumes réels. Le second, 
-        en pourcentages, révèle les changements de composition : professionnalisation (hausse de A), 
-        stabilité, ou maintien des structures existantes. Les métriques de variation quantifient 
-        ces tendances sur la période 2014-2022.
+        Les deux graphiques présentent l'évolution des catégories professionnelles. 
+        Le premier montre les effectifs absolus, le second révèle les changements de composition 
+        en pourcentages.
         """)
         
         # Analyse des tendances
-        st.subheader("📈 Analyse des tendances")
+        st.subheader("Analyse des tendances")
         col1, col2, col3 = st.columns(3)
         
         for i, cat in enumerate(['A', 'B', 'C']):
@@ -805,15 +800,15 @@ elif page == "📈 Évolution temporelle":
 # =============================================================================
 # PAGE 7 : ANALYSE POST-COVID
 # =============================================================================
-elif page == "🦠 Analyse post-COVID":
+elif page == "Analyse post-COVID":
     st.header("Impact du COVID-19 sur la Dispersion Géographique")
-    st.markdown("*Analyse de la distance moyenne de Paris avant/après 2020*")
+    st.markdown("Analyse de la distance moyenne de Paris avant/après 2020")
     
     # Distance moyenne par année
     distance_annuelle = df.groupby('DATE')['DISTANCE_PARIS_KM'].mean()
     
     # GRAPHIQUE 1: Distance moyenne par année
-    st.subheader("1️⃣ Distance moyenne de Paris par année")
+    st.subheader("Distance moyenne de Paris par année")
     
     fig1 = go.Figure()
     
@@ -855,14 +850,13 @@ elif page == "🦠 Analyse post-COVID":
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** L'évolution de la distance moyenne montre la tendance de localisation résidentielle 
+    L'évolution de la distance moyenne montre la tendance de localisation résidentielle 
     avant et après le début de la pandémie COVID-19 (marquée par la ligne verticale rouge). 
-    Les métriques comparent les périodes pré-COVID (2014-2019) et post-COVID (2020-2022), 
-    permettant de quantifier l'ampleur du changement éventuel dans les patterns de résidence.
+    Les métriques comparent les périodes pré-COVID (2014-2019) et post-COVID (2020-2022).
     """)
     
     # GRAPHIQUE 2: Boxplot comparatif
-    st.subheader("2️⃣ Distribution des distances : Pré vs Post COVID")
+    st.subheader("Distribution des distances : Pré vs Post COVID")
     
     df_covid = df.copy()
     df_covid['Période'] = df_covid['DATE'].apply(lambda x: 'Pré-COVID (≤2019)' if x <= 2019 else 'Post-COVID (≥2020)')
@@ -883,14 +877,12 @@ elif page == "🦠 Analyse post-COVID":
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** Les boxplots comparent les distributions complètes des distances pour les deux périodes. 
-    Au-delà de la moyenne, cette visualisation révèle les changements dans la médiane, les quartiles, 
-    et la dispersion globale. Elle permet d'identifier si la pandémie a modifié les patterns de résidence 
-    de manière substantielle ou marginale.
+    Les boxplots comparent les distributions complètes des distances pour les deux périodes. 
+    Cette visualisation révèle les changements dans la médiane, les quartiles et la dispersion globale.
     """)
     
     # GRAPHIQUE 3: Évolution Paris vs Hors Paris
-    st.subheader("3️⃣ Répartition Paris vs Hors Paris dans le temps")
+    st.subheader("Répartition Paris vs Hors Paris dans le temps")
     
     zone_evolution = df.groupby(['DATE', 'ZONE_SIMPLIFIEE'])['AGENT'].sum().reset_index()
     zone_pivot = zone_evolution.pivot(index='DATE', columns='ZONE_SIMPLIFIEE', values='AGENT')
@@ -933,14 +925,12 @@ elif page == "🦠 Analyse post-COVID":
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** Le graphique en aires empilées montre l'évolution de la proportion d'agents 
-    résidant à Paris intra-muros versus hors Paris. Cette visualisation permet d'identifier 
-    une éventuelle accélération de la périurbanisation après 2020, ou au contraire une stabilité 
-    des choix résidentiels malgré le contexte pandémique.
+    Le graphique en aires empilées montre l'évolution de la proportion d'agents 
+    résidant à Paris intra-muros versus hors Paris.
     """)
     
     # GRAPHIQUE 4: Agents à >50km
-    st.subheader("4️⃣ Agents vivant à plus de 50km de Paris")
+    st.subheader("Agents vivant à plus de 50km de Paris")
     
     agents_loin = df[df['DISTANCE_PARIS_KM'] > 50].groupby('DATE')['AGENT'].sum()
     
@@ -966,25 +956,23 @@ elif page == "🦠 Analyse post-COVID":
     
     # Interpretación descriptiva
     st.markdown("""
-    **Observations :** Ce graphique se concentre sur les agents résidant à plus de 50 km de Paris, 
-    une distance significative impliquant généralement des trajets quotidiens conséquents ou du télétravail régulier. 
-    L'évolution de ce sous-groupe permet d'identifier si la pandémie a favorisé les installations à grande distance, 
-    rendues plus viables par la généralisation du télétravail.
+    Ce graphique se concentre sur les agents résidant à plus de 50 km de Paris, 
+    une distance significative impliquant généralement des trajets quotidiens conséquents ou du télétravail régulier.
     """)
     
     # Interprétation finale
-    st.subheader("💡 Synthèse")
+    st.subheader("Synthèse")
     if abs(variation) > 2:
-        st.success(f"→ Variation détectable de {variation:+.2f}% entre les périodes pré et post-COVID")
+        st.success(f"Variation détectable de {variation:+.2f}% entre les périodes pré et post-COVID")
     else:
-        st.info(f"→ Variation limitée ({variation:+.2f}%) : stabilité relative des patterns résidentiels")
+        st.info(f"Variation limitée ({variation:+.2f}%) : stabilité relative des patterns résidentiels")
 
 # =============================================================================
 # PAGE 8 : WORDCLOUD
 # =============================================================================
-elif page == "☁️ WordCloud - Text Mining":
+elif page == "WordCloud - Text Mining":
     st.header("Analyse d'un Article de Presse - Text Mining")
-    st.markdown("**Source :** Le Figaro - Article sur les effectifs de la Ville de Paris")
+    st.markdown("**Source :** [Le Figaro - Article sur les effectifs de la Ville de Paris](https://www.lefigaro.fr/actualite-france/une-armee-de-55-000-personnes-la-mairie-de-paris-emploie-t-elle-plus-d-agents-que-toutes-les-prefectures-de-france-reunies-20241029)")
     
     st.info("Analyse textuelle d'un article portant sur les effectifs de la mairie de Paris")
     
@@ -1010,14 +998,14 @@ elif page == "☁️ WordCloud - Text Mining":
         
         # Interpretación descriptiva
         st.markdown("""
-        **Observations :** Le nuage de mots révèle les termes dominants du discours médiatique : 
+        Le nuage de mots révèle les termes dominants du discours médiatique : 
         les mots de plus grande taille apparaissent plus fréquemment dans le texte. Cette visualisation 
         permet d'identifier rapidement les thèmes principaux abordés dans l'article (effectifs, services, 
-        administration, budget, etc.) et donne un aperçu du cadrage journalistique du sujet.
+        administration, budget, etc.).
         """)
         
     except FileNotFoundError:
-        st.error("❌ Fichier wordcloud_article_lefigaro.png non trouvé dans le dossier")
+        st.error("Fichier wordcloud_article_lefigaro.png non trouvé dans le dossier")
         st.info("Assurez-vous que le fichier est dans le même répertoire que streamlit.py")
 
 # =============================================================================
@@ -1027,7 +1015,7 @@ st.markdown("---")
 st.markdown(
     """
     <div style='text-align: center; color: gray;'>
-        <p>📊 Projet Data Management 2025 | Données : Open Data Paris | Outil : Streamlit + Python</p>
+        <p>Projet Data Management 2025 | Données : Open Data Paris | Outil : Streamlit + Python</p>
     </div>
     """,
     unsafe_allow_html=True

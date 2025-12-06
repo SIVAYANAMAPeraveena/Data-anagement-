@@ -1,8 +1,32 @@
-﻿venv_streamlit/
+# Virtual environments
 venv/
+venv_streamlit/
 env/
+ENV/
+.venv/
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+
 .ipynb_checkpoints/
+*.ipynb_checkpoints
+
+
+.vscode/
+.idea/
+*.swp
+*.swo
+
+
+.DS_Store
+Thumbs.db
+
+
 temp_map.html
 temp_treemap.html
+

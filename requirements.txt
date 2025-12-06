@@ -6,3 +6,6 @@ streamlit
 folium
 streamlit-folium
 pillow
+plotly
+plotly.graph_objects
+plotly.express
