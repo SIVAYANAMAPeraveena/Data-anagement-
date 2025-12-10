@@ -121,10 +121,10 @@ st.sidebar.info(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("### 🔗 Accès aux données")
+st.sidebar.markdown("### Accès aux données")
 st.sidebar.markdown(
     """
-    [📊 Dataset OpenData Paris](https://opendata.paris.fr/explore/dataset/domiciliation-des-agents-bilan-social/information/)
+    [ Dataset OpenData Paris](https://opendata.paris.fr/explore/dataset/domiciliation-des-agents-bilan-social/information/)
     """
 )
 
@@ -134,20 +134,20 @@ st.sidebar.markdown(
 if page == "Présentation des données":
     st.header("Présentation du jeu de données")
     
-    # FILTRO DE AÑO
+    # FILTRE ANNUEL
     st.sidebar.markdown("---")
     st.sidebar.subheader("Filtres")
     annee_selectionnee = st.sidebar.selectbox(
         "Sélectionner une année :",
         options=sorted(df['DATE'].unique(), reverse=True),
-        index=0  # Por defecto el más reciente (2022)
+        index=0  # Par défaut, la plus récente (2022)
     )
     
-    # Filtrar datos por año
+    # Filtrer les données par année
     df_filtree = df[df['DATE'] == annee_selectionnee].copy()
     
-    # Mensaje claro
-    st.info(f"Données affichées pour l'année {annee_selectionnee} (pour éviter le double comptage des agents)")
+    # Message
+    st.info(f"Données affichées pour l'année {annee_selectionnee}")
     
     col1, col2, col3 = st.columns(3)
     with col1:
@@ -182,22 +182,22 @@ if page == "Présentation des données":
 elif page == "Carte géographique":
     st.header("Concentration géographique des agents")
     
-    # FILTRO DE AÑO
+    # Filtrer les données par année
     st.sidebar.markdown("---")
     st.sidebar.subheader("Filtres")
     annee_selectionnee = st.sidebar.selectbox(
         "Sélectionner une année :",
         options=sorted(df['DATE'].unique(), reverse=True),
-        index=0  # 2022 por defecto
+        index=0  # 2022 par défaut
     )
     
-    # Filtrar datos por año
+    # Filtrer les données par année
     df_filtree = df[df['DATE'] == annee_selectionnee].copy()
     
-    # Mensaje claro
-    st.info(f"Carte pour l'année {annee_selectionnee} (évite le double comptage)")
+    # Message affiché
+    st.info(f"Carte pour l'année {annee_selectionnee}")
     
-    # Agrégation par ville (ya viene con PARIS 1, PARIS 10, etc en la columna VILLE)
+    # Agrégation par ville
     donnees_villes = df_filtree.groupby(['VILLE', 'LATITUDE', 'LONGITUDE']).agg({
         'AGENT': 'sum'
     }).reset_index().dropna(subset=['LATITUDE', 'LONGITUDE'])
@@ -230,7 +230,7 @@ elif page == "Carte géographique":
     
     st.plotly_chart(fig, use_container_width=True)
     
-    # Interpretación descriptiva
+    # Interprétation descriptive
     st.markdown("""
     La carte montre une forte concentration d'agents dans Paris intra-muros, 
     avec une présence importante dans les communes limitrophes de la petite couronne. 
@@ -325,7 +325,7 @@ elif page == "Analyse géographique détaillée":
     
     st.plotly_chart(fig1, use_container_width=True)
     
-    # Interprétation descriptiva
+    # Interprétation
     st.markdown("""
     Les boxplots montrent les distributions de distances pour chaque catégorie professionnelle. 
     La médiane (ligne centrale) indique la distance typique, tandis que la boîte représente 50% des agents.
@@ -364,7 +364,7 @@ elif page == "Analyse géographique détaillée":
     
     st.plotly_chart(fig2, use_container_width=True)
     
-    # Interprétation descriptiva
+    # Interprétation
     st.markdown("""
     La comparaison par genre montre les différences de distribution des distances résidentielles. 
     Les médianes et quartiles permettent d'identifier les tendances centrales et la dispersion pour chaque groupe.
@@ -396,7 +396,7 @@ elif page == "Analyse géographique détaillée":
     
     st.plotly_chart(fig3, use_container_width=True)
     
-    # Interprétation descriptiva
+    # Interprétation 
     st.markdown("""
     L'analyse croisée compare simultanément les effets de la catégorie professionnelle 
     et du genre sur la localisation résidentielle. Pour chaque catégorie (A, B, C), les distributions sont présentées 
@@ -429,14 +429,14 @@ elif page == "Analyse géographique détaillée":
     
     st.plotly_chart(fig4, use_container_width=True)
     
-    # Interprétation descriptiva
+    # Interprétation
     st.markdown("""
     La heatmap synthétise les distances médianes pour chaque combinaison de catégorie et genre. 
     Les couleurs facilitent l'identification des groupes résidant plus près ou plus loin de Paris.
     """)
 
 # =============================================================================
-# PAGE 4 : TREEMAP - DIRECTIONS THÉMATIQUES (JERÁRQUICO 2 NIVELES)
+# PAGE 4 : TREEMAP - DIRECTIONS THÉMATIQUES
 # =============================================================================
 elif page == "Treemap - Directions thématiques":
     st.header("Distribution des agents par direction thématique")
@@ -446,14 +446,14 @@ elif page == "Treemap - Directions thématiques":
     # Préparer données hiérarchiques
     data_treemap = df.dropna(subset=['DIRECTION_THEMATIQUE', 'DIRECTION', 'SEXE'])
     
-    # Crear estructura jerárquica
+    # Créer une structure hiérarchique
     labels = []
     parents = []
     values = []
     colors = []
     hover_texts = []
     
-    # Primero agregar las categorías temáticas (nivel 1)
+    # Commencez par ajouter les catégories thématiques (niveau 1)
     for thematique in sorted(data_treemap['DIRECTION_THEMATIQUE'].unique()):
         them_data = data_treemap[data_treemap['DIRECTION_THEMATIQUE'] == thematique]
         total_agents = them_data['AGENT'].sum()
@@ -470,18 +470,18 @@ elif page == "Treemap - Directions thématiques":
             f"Femmes: {pct_women:.1f}%"
         )
     
-    # Luego agregar las direcciones individuales (nivel 2)
+    # Ajoutez ensuite les adresses individuelles (niveau 2)
     for thematique in sorted(data_treemap['DIRECTION_THEMATIQUE'].unique()):
         them_data = data_treemap[data_treemap['DIRECTION_THEMATIQUE'] == thematique]
         
-        # Por cada dirección en esta temática
+        # Pour chaque direction de ce thème
         for direction in them_data['DIRECTION'].unique():
             dir_data = them_data[them_data['DIRECTION'] == direction]
             total_agents = dir_data['AGENT'].sum()
             women_agents = dir_data[dir_data['SEXE'] == 'FEMININ']['AGENT'].sum()
             pct_women = (women_agents / total_agents * 100) if total_agents > 0 else 0
             
-            # Buscar nombre completo
+            # Rechercher le nom complet
             nom_complet = direction
             for them_key, directions_dict in DIRECTION_MAPPING.items():
                 if direction in directions_dict:
@@ -524,7 +524,7 @@ elif page == "Treemap - Directions thématiques":
     
     st.plotly_chart(fig, use_container_width=True)
     
-    # Interpretación descriptiva
+    # Interpretation
     st.markdown("""
     Le treemap présente une visualisation hiérarchique à deux niveaux. 
     La taille de chaque rectangle est proportionnelle au nombre d'agents. Le premier niveau montre 
@@ -605,7 +605,7 @@ elif page == "Treemap - Directions thématiques":
         use_container_width=True
     )
     
-    # Interpretación descriptiva
+    # Interprétation
     st.markdown("""
     Les tableaux détaillés montrent la composition exacte de chaque catégorie thématique, 
     avec les effectifs par direction, leur poids relatif, et la proportion de femmes.
@@ -660,7 +660,7 @@ elif page == "Analyse par catégorie":
     
     st.plotly_chart(fig, use_container_width=True)
     
-    # Interpretación descriptiva
+    # Interprétation
     st.markdown("""
     Le graphique en barres empilées montre la composition de chaque direction thématique 
     selon les trois catégories professionnelles (A, B, C). Les directions sont classées par ordre décroissant 
@@ -716,7 +716,7 @@ elif page == "Évolution temporelle":
         fig.update_layout(height=600, xaxis_title='Année', yaxis_title='Nombre d\'agents')
         st.plotly_chart(fig, use_container_width=True)
         
-        # Interpretación descriptiva
+        # Interpretation
         st.markdown("""
         L'évolution temporelle montre les tendances d'effectifs pour chaque direction thématique 
         entre 2014 et 2022. Certaines directions présentent une croissance continue, d'autres une stabilité, 
@@ -773,7 +773,7 @@ elif page == "Évolution temporelle":
         
         st.plotly_chart(fig2, use_container_width=True)
         
-        # Interpretación descriptiva
+        # Interprétation
         st.markdown("""
         Les deux graphiques présentent l'évolution des catégories professionnelles. 
         Le premier montre les effectifs absolus, le second révèle les changements de composition 
@@ -848,7 +848,7 @@ elif page == "Analyse post-COVID":
     with col3:
         st.metric("Variation", f"{variation:+.2f}%", delta_color="normal")
     
-    # Interpretación descriptiva
+    # Interprétation
     st.markdown("""
     L'évolution de la distance moyenne montre la tendance de localisation résidentielle 
     avant et après le début de la pandémie COVID-19 (marquée par la ligne verticale rouge). 
@@ -875,7 +875,7 @@ elif page == "Analyse post-COVID":
     fig2.update_layout(height=500, showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
     
-    # Interpretación descriptiva
+    # Interprétation
     st.markdown("""
     Les boxplots comparent les distributions complètes des distances pour les deux périodes. 
     Cette visualisation révèle les changements dans la médiane, les quartiles et la dispersion globale.
@@ -923,7 +923,7 @@ elif page == "Analyse post-COVID":
     
     st.plotly_chart(fig3, use_container_width=True)
     
-    # Interpretación descriptiva
+    # Interpretation
     st.markdown("""
     Le graphique en aires empilées montre l'évolution de la proportion d'agents 
     résidant à Paris intra-muros versus hors Paris.
@@ -954,7 +954,7 @@ elif page == "Analyse post-COVID":
     
     st.plotly_chart(fig4, use_container_width=True)
     
-    # Interpretación descriptiva
+    # Interpretation
     st.markdown("""
     Ce graphique se concentre sur les agents résidant à plus de 50 km de Paris, 
     une distance significative impliquant généralement des trajets quotidiens conséquents ou du télétravail régulier.
