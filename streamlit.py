@@ -24,8 +24,8 @@ st.markdown("---")
 # --- CHARGEMENT DES DONNÉES ---
 @st.cache_data
 def charger_donnees():
-    """Charge le fichier CSV nettoyé"""
-    df = pd.read_csv('domiciliation_agents_nettoyee_et_enrichie.csv', sep=';', encoding='utf-8')
+    """Charge le fichier parquet nettoyé"""
+    df = pd.read_parquet('domiciliation_agents_nettoyee_et_enrichie.parquet')
     return df
 
 # Charger les données
